@@ -1529,6 +1529,7 @@ final class ConsensusModuleAgent
             else if (ClusterAction.SNAPSHOT == action && CLUSTER_ACTION_FLAGS_DEFAULT == flags)
             {
                 state(ConsensusModule.State.SNAPSHOT);
+                totalSnapshotDurationTracker.onSnapshotBegin(clusterClock.timeNanos());
                 if (0 == serviceCount)
                 {
                     snapshotOnServiceAck(logPosition, timestamp, ServiceAck.EMPTY_SERVICE_ACKS);
