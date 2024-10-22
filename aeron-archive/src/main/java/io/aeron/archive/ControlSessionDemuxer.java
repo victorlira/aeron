@@ -1066,7 +1066,7 @@ class ControlSessionDemuxer implements Session, FragmentHandler
                 if (null != controlSession)
                 {
                     final long replayToken = conductor.generateReplayToken(controlSession, recordingId);
-                    controlSession.sendOkResponse(correlationId, replayToken, conductor.controlResponseProxy());
+                    controlSession.sendOkResponse(correlationId, replayToken);
                 }
             }
         }
@@ -1116,11 +1116,8 @@ class ControlSessionDemuxer implements Session, FragmentHandler
                 conductor.logWarning("unauthorised archive action=" + templateId +
                     " controlSessionId=" + controlSessionId + " source=" + image.sourceIdentity());
 
-                controlSession.attemptErrorResponse(
-                    correlationId,
-                    ArchiveException.UNAUTHORISED_ACTION,
-                    "unauthorised action",
-                    conductor.controlResponseProxy());
+                controlSession.sendErrorResponse(
+                    correlationId, ArchiveException.UNAUTHORISED_ACTION, "unauthorised action");
 
                 return null;
             }

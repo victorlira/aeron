@@ -567,8 +567,7 @@ final class ConsensusModuleAgent
         final int offset,
         final int length)
     {
-        final ClusterSession session = new ClusterSession(
-            clusterSessionId, responseStreamId, refineResponseChannel(responseChannel));
+        final ClusterSession session = new ClusterSession(clusterSessionId, responseStreamId, responseChannel);
 
         session.loadSnapshotState(correlationId, openedPosition, timeOfLastActivity, closeReason);
 
@@ -1480,10 +1479,7 @@ final class ConsensusModuleAgent
         final int responseStreamId,
         final String responseChannel)
     {
-        final ClusterSession session = new ClusterSession(
-            clusterSessionId,
-            responseStreamId,
-            refineResponseChannel(responseChannel));
+        final ClusterSession session = new ClusterSession(clusterSessionId, responseStreamId, responseChannel);
         session.open(logPosition);
         session.lastActivityNs(clusterTimeUnit.toNanos(timestamp), correlationId);
 
@@ -3259,8 +3255,6 @@ final class ConsensusModuleAgent
             sessions.get(i).timeOfLastActivityNs(nowNs);
         }
 
-        totalSnapshotDurationTracker.onSnapshotEnd(clusterClock.timeNanos());
-
         if (null != clusterTermination)
         {
             serviceProxy.terminationPosition(terminationPosition, ctx.countedErrorHandler());
@@ -3340,6 +3334,7 @@ final class ConsensusModuleAgent
         recordingLog.force(ctx.fileSyncLevel());
         recoveryPlan = recordingLog.createRecoveryPlan(archive, serviceCount, Aeron.NULL_VALUE);
         ctx.snapshotCounter().incrementOrdered();
+        totalSnapshotDurationTracker.onSnapshotEnd(clusterClock.timeNanos());
     }
 
     private void awaitRecordingComplete(
